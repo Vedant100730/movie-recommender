@@ -68,19 +68,22 @@ h1 { font-family: 'Playfair Display', serif !important; }
 
 
 # ── Model loading (cached so it only happens once) ────────────────────────────
-@st.cache_resource(show_spinner="Loading recommendation models …")
+@st.cache_resource(show_spinner="Training models (~2 mins)...")
 def load_models():
-    hybrid_path = os.path.join(SAVE_DIR, "hybrid_model.pkl")
-    movies_path = os.path.join(SAVE_DIR, "movies.pkl")
+    import sys
+    from utils.data_loader import load_movies, load_ratings, load_tags, build_movie_profiles, build_user_movie_matrix
+    from models.hybrid import HybridRecommender
 
-    if not os.path.exists(hybrid_path):
-        return None, None
+    movies  = load_movies()
+    ratings = load_ratings()
+    tags    = load_tags()
+    profiles = build_movie_profiles(movies, tags)
+    matrix   = build_user_movie_matrix(ratings)
 
-    with open(hybrid_path, "rb") as f:
-        hybrid = pickle.load(f)
-    with open(movies_path, "rb") as f:
-        movies = pickle.load(f)
+    hybrid = HybridRecommender(alpha=0.4)
+    hybrid.fit(profiles, matrix, movies)
     return hybrid, movies
+
 
 
 # ── Main UI ───────────────────────────────────────────────────────────────────

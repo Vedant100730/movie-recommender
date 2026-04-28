@@ -90,12 +90,13 @@ st.caption("Powered by Content-Based + Collaborative Filtering (Hybrid)")
 hybrid, movies = load_models()
 
 if hybrid is None:
-    st.error(
-        "⚠️  Models not found. Please run `python train.py` first to download "
-        "the dataset and train the models.",
-        icon="🚨",
-    )
-    st.code("python train.py", language="bash")
+    import subprocess
+    with st.spinner("⏳ Training models for first time... (~2 mins, only once)"):
+        subprocess.run([sys.executable, "train.py"], check=True)
+    hybrid, movies = load_models()
+
+if hybrid is None:
+    st.error("Training failed. Check logs.", icon="🚨")
     st.stop()
 
 # ── Sidebar settings ──────────────────────────────────────────────────────────

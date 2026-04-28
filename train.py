@@ -46,7 +46,7 @@ def main():
     print("=" * 60)
     print("STEP 1 / 5  —  Data Acquisition")
     print("=" * 60)
-    download_dataset()
+    # download_dataset()
 
     # ── 2. Preprocessing ─────────────────────────────────────────────────────
     print("\n" + "=" * 60)
